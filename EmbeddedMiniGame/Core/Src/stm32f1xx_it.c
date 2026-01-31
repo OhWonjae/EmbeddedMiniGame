@@ -208,7 +208,6 @@ void EXTI3_IRQHandler(void)
   /* USER CODE END EXTI3_IRQn 0 */
   HAL_GPIO_EXTI_IRQHandler(left_btn_Pin);
   /* USER CODE BEGIN EXTI3_IRQn 1 */
-
   /* USER CODE END EXTI3_IRQn 1 */
 }
 
@@ -222,7 +221,6 @@ void EXTI4_IRQHandler(void)
   /* USER CODE END EXTI4_IRQn 0 */
   HAL_GPIO_EXTI_IRQHandler(right_btn_Pin);
   /* USER CODE BEGIN EXTI4_IRQn 1 */
-
   /* USER CODE END EXTI4_IRQn 1 */
 }
 

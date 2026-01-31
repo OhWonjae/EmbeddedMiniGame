@@ -23,6 +23,7 @@
 /* USER CODE BEGIN Includes */
 #include "ssd1306.h"
 #include "fonts.h"
+#include "global.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -91,20 +92,53 @@ int main(void)
   MX_GPIO_Init();
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
-
+  if (ssd1306_Init(&hi2c1) != 0) {
+  	        Error_Handler();
+  	 }
+  ssd1306_Fill(Black);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  uint8_t data =  HAL_GPIO_ReadPin(test_GPIO_Port, test_Pin);
-	  uint8_t data1 =  HAL_GPIO_ReadPin(test1_GPIO_Port, test1_Pin);
-	  if (ssd1306_Init(&hi2c1) != 0) {
-	        Error_Handler();
-	      }
-//	      HAL_Delay(1000);
-	  ssd1306_Fill(White);
+
+	  uint8_t lx = 20,ly = 60,rx = 60,ry = 60;
+	  if(input.left_btn_down==1){
+		  ssd1306_SetCursor(lx, ly);
+		  for (uint8_t i=lx; i<lx+20; i++) {
+			  for (uint8_t j=ly; j<ly+20; j++) {
+				  ssd1306_DrawPixel(i, j, White);
+			  }
+		  }
+		  //input.left_btn_down = 0;
+	  }else{
+		  ssd1306_SetCursor(lx, ly);
+		  		  for (uint8_t i=lx; i<lx+20; i++) {
+		  			  for (uint8_t j=ly; j<ly+20; j++) {
+		  				  ssd1306_DrawPixel(i, j, Black);
+		  			  }
+		  		  }
+	  }
+	  if(input.right_btn_down==1){
+		  ssd1306_SetCursor(rx, ry);
+		  		  for (uint8_t i=rx; i<rx+20; i++) {
+		  			  for (uint8_t j=ry; j<ry+20; j++) {
+		  				  ssd1306_DrawPixel(i, j, White);
+		  			  }
+		  		  }
+		  //input.right_btn_down = 0;
+	  }else{
+		  ssd1306_SetCursor(rx, ry);
+		 		  		  for (uint8_t i=rx; i<rx+20; i++) {
+		 		  			  for (uint8_t j=ry; j<ry+20; j++) {
+		 		  				  ssd1306_DrawPixel(i, j, Black);
+		 		  			  }
+		 		  		  }
+	  }
+
+
+
 	  ssd1306_UpdateScreen(&hi2c1);
     /* USER CODE END WHILE */
 
@@ -200,7 +234,7 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pins : left_btn_Pin right_btn_Pin */
   GPIO_InitStruct.Pin = left_btn_Pin|right_btn_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
