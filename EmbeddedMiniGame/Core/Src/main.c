@@ -21,9 +21,9 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "ssd1306.h"
-#include "fonts.h"
 #include "global.h"
+#include "game.h"
+#include "ssd1306.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -44,6 +44,8 @@
 /* Private variables ---------------------------------------------------------*/
 I2C_HandleTypeDef hi2c1;
 
+TIM_HandleTypeDef htim2;
+
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -52,6 +54,7 @@ I2C_HandleTypeDef hi2c1;
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_I2C1_Init(void);
+static void MX_TIM2_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -91,55 +94,26 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_I2C1_Init();
+  MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
   if (ssd1306_Init(&hi2c1) != 0) {
-  	        Error_Handler();
-  	 }
-  ssd1306_Fill(Black);
+  	   	Error_Handler();
+  }
+  // 대기화면
+  GameIdle(&hi2c1,&htim2);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-
-	  uint8_t lx = 20,ly = 60,rx = 60,ry = 60;
-	  if(input.left_btn_down==1){
-		  ssd1306_SetCursor(lx, ly);
-		  for (uint8_t i=lx; i<lx+20; i++) {
-			  for (uint8_t j=ly; j<ly+20; j++) {
-				  ssd1306_DrawPixel(i, j, White);
-			  }
-		  }
-		  //input.left_btn_down = 0;
-	  }else{
-		  ssd1306_SetCursor(lx, ly);
-		  		  for (uint8_t i=lx; i<lx+20; i++) {
-		  			  for (uint8_t j=ly; j<ly+20; j++) {
-		  				  ssd1306_DrawPixel(i, j, Black);
-		  			  }
-		  		  }
+	  if(!game.is_start){
+		  GameIdle(&hi2c1,&htim2);
 	  }
-	  if(input.right_btn_down==1){
-		  ssd1306_SetCursor(rx, ry);
-		  		  for (uint8_t i=rx; i<rx+20; i++) {
-		  			  for (uint8_t j=ry; j<ry+20; j++) {
-		  				  ssd1306_DrawPixel(i, j, White);
-		  			  }
-		  		  }
-		  //input.right_btn_down = 0;
-	  }else{
-		  ssd1306_SetCursor(rx, ry);
-		 		  		  for (uint8_t i=rx; i<rx+20; i++) {
-		 		  			  for (uint8_t j=ry; j<ry+20; j++) {
-		 		  				  ssd1306_DrawPixel(i, j, Black);
-		 		  			  }
-		 		  		  }
-	  }
+	  isStartBtnDown();
+	  GameStart();
 
 
-
-	  ssd1306_UpdateScreen(&hi2c1);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -218,6 +192,58 @@ static void MX_I2C1_Init(void)
 }
 
 /**
+  * @brief TIM2 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM2_Init(void)
+{
+
+  /* USER CODE BEGIN TIM2_Init 0 */
+
+  /* USER CODE END TIM2_Init 0 */
+
+  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+  TIM_SlaveConfigTypeDef sSlaveConfig = {0};
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+
+  /* USER CODE BEGIN TIM2_Init 1 */
+
+  /* USER CODE END TIM2_Init 1 */
+  htim2.Instance = TIM2;
+  htim2.Init.Prescaler = 8000-1;
+  htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim2.Init.Period = 3000-1;
+  htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim2, &sClockSourceConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sSlaveConfig.SlaveMode = TIM_SLAVEMODE_DISABLE;
+  sSlaveConfig.InputTrigger = TIM_TS_ITR1;
+  if (HAL_TIM_SlaveConfigSynchro(&htim2, &sSlaveConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim2, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM2_Init 2 */
+
+  /* USER CODE END TIM2_Init 2 */
+
+}
+
+/**
   * @brief GPIO Initialization Function
   * @param None
   * @retval None
@@ -235,7 +261,7 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pins : left_btn_Pin right_btn_Pin */
   GPIO_InitStruct.Pin = left_btn_Pin|right_btn_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /* EXTI interrupt init*/

@@ -3,6 +3,7 @@
 /*
  * exti 버튼 인터럽트 콜백(FALLING, RASING 트리거) - 버튼누르는 동안 계속 감지 필요!!
  * HAL과 어플리케이션 레벨 분리 적용
+ * 채터링 방지를 위해 트리거 이후 50ms 동안의 트리거 정보는 무시함
  */
 // static 씀으로써 외부노출 피함
 static void Btn_Trigger(uint16_t GPIO_Pin){
