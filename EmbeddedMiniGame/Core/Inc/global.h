@@ -16,6 +16,8 @@ typedef struct _GAME{
 	uint8_t score;
 }Game;
 
+// 점수판 자리수
+extern uint8_t fndOrder;
 
 extern Input input;
 extern Game game;

@@ -16,7 +16,7 @@
 
 
 
-void GameIdle(I2C_HandleTypeDef* hi2c1, TIM_HandleTypeDef* _htim1Ptr);
+void GameIdle(I2C_HandleTypeDef* hi2c1, TIM_HandleTypeDef* _htim1Ptr, TIM_HandleTypeDef* _htim3Ptr);
 void isStartBtnDown();
 void GameStart();
 
