@@ -4,6 +4,7 @@
 #include "ssd1306.h"
 #include "fonts.h"
 #include "stdlib.h"
+#include "fnd.h"
 
 
 #define P_INIT_X_POS 59 // 플레이어 기본 x 좌표
@@ -18,6 +19,7 @@
  */
 static I2C_HandleTypeDef* hi2c1Ptr = NULL;
 static TIM_HandleTypeDef* htim1Ptr = NULL;
+static TIM_HandleTypeDef* htim3Ptr = NULL;
 
 // 플레이어 위치 좌표
 typedef struct {
@@ -88,6 +90,8 @@ static void RainDown(){
 				rains[i].pos.y+=1*r_speed;
 				DrawRectangle(rains[i].pos.x, rains[i].pos.y, R_WIDTH, R_HEIGHT, White);
 			}else{
+				// 비가 사라질때마다 점수 추가
+				game.score+=10;
 				DrawRectangle(rains[i].pos.x, rains[i].pos.y, R_WIDTH, R_HEIGHT, Black);
 				rains[i].pos.y = 0;
 				rains[i].active = 0;
@@ -116,10 +120,11 @@ static void PlayerMove(){
 }
 
 // 게임 대기 상태 시작
-void GameIdle(I2C_HandleTypeDef* _hi2c1Ptr, TIM_HandleTypeDef* _htim1Ptr){
+void GameIdle(I2C_HandleTypeDef* _hi2c1Ptr, TIM_HandleTypeDef* _htim1Ptr,TIM_HandleTypeDef* _htim3Ptr ){
 	// i2c 핸들러 세팅
 	hi2c1Ptr = _hi2c1Ptr;
 	htim1Ptr = _htim1Ptr;
+	htim3Ptr = _htim3Ptr;
 	ssd1306_Fill(Black);
 	// 바닥 생성
 	DrawRectangle(0,59,128,5,White);
@@ -133,6 +138,8 @@ void GameIdle(I2C_HandleTypeDef* _hi2c1Ptr, TIM_HandleTypeDef* _htim1Ptr){
 		rains[i].pos.y = 0;
 		rains[i].active = 0;
 	}
+	// 점수 초기화
+	game.score=0;
 	// 문구 생성
 	DrawWord(5, 10,"Press Any Btn Key", Font_7x10, White);
 	// 화면 출력
@@ -144,6 +151,8 @@ void isStartBtnDown(){
 		game.is_start = 1;
 		// 산성비 타이머 시작
 		HAL_TIM_Base_Start_IT(htim1Ptr);
+		// 점수판 타이머 시작
+		HAL_TIM_Base_Start_IT(htim3Ptr);
 	}
 }
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
@@ -151,12 +160,18 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     if (htim->Instance == TIM2)
     {
     	SelectRain();
+    }else if(htim->Instance == TIM3){
+    	if(game.score>9999){
+    		game.score = 9999;
+    	}
+    	digit4(game.score);
     }
 }
 void GameStart(){
 	if(!game.is_start){
 		return;
 	}
+
 
 	// 하늘과 플레이어 부분 초기화
 	DrawRectangle(0, 0, 128, 55,Black);

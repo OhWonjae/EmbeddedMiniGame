@@ -4,3 +4,4 @@
  */
 Input input = {0,0};
 Game game = {0,0};
+uint8_t fndOrder = 0;

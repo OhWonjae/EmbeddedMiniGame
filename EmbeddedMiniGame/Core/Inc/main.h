@@ -63,6 +63,8 @@ void Error_Handler(void);
 #define right_btn_Pin GPIO_PIN_4
 #define right_btn_GPIO_Port GPIOA
 #define right_btn_EXTI_IRQn EXTI4_IRQn
+#define SPI1_RCK_Pin GPIO_PIN_6
+#define SPI1_RCK_GPIO_Port GPIOA
 
 /* USER CODE BEGIN Private defines */
 
