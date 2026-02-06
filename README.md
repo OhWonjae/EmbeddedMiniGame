@@ -46,6 +46,15 @@ https://github.com/user-attachments/assets/a9f17bbb-454a-48a4-886c-c38dc7128dea
 ### 2. 3초 주기의 타이머를 통해 산성비를 생성하는 로직과 생성된 산성비가 내리는 로직(내려가고, 플레이어나 바닥에 닿으면 사라지는것 포함) 구현
 <img width="1333" height="702" alt="image" src="https://github.com/user-attachments/assets/7bf153ab-ae92-4214-87c9-b8ac415f271b" />
 
+# 로직분석기를 통해 7-Segment의 SPI통신 파형 분석
+### 1. 각 자리수를 보낼떄 어떤 몇번째 자리인지에 어떤 숫자가 들어갈지에 대한 데이터에 대한 파형
+<img width="1219" height="834" alt="image" src="https://github.com/user-attachments/assets/6e6ba85d-b419-4948-b7f2-f5b1106dfeda" />
+
+### 2. 전체 4자리의 데이터가 출력될때의 파형과 각 자리수 데이터 사이에 타이머로 설정해놓은 2ms 주기가 실제 파형으로 보여지는 모습
+<img width="1422" height="713" alt="2ms" src="https://github.com/user-attachments/assets/f19e8e80-590e-49c5-adc6-12fd00fa422d" />
+
+
+
 
 
 
