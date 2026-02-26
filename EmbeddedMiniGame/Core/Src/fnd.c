@@ -3,7 +3,7 @@
 /*
  * 7 segment 파일
  */
-static uint8_t _LED_0F[29];
+static const uint8_t _LED_0F[29];
 static SPI_HandleTypeDef* hspi;
 void send_init(SPI_HandleTypeDef* _hspi){
 	hspi = _hspi;
