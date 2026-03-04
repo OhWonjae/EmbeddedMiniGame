@@ -53,9 +53,6 @@ https://github.com/user-attachments/assets/a9f17bbb-454a-48a4-886c-c38dc7128dea
 ### 2. 전체 4자리의 데이터가 출력될때의 파형과 각 자리수 데이터 사이에 타이머로 설정해놓은 2ms 주기가 실제 파형으로 보여지는 모습
 <img width="1422" height="713" alt="2ms" src="https://github.com/user-attachments/assets/f19e8e80-590e-49c5-adc6-12fd00fa422d" />
 
-
-
-
-
-
+# 회로도 
+[회로도.pdf](https://github.com/user-attachments/files/25739535/default.pdf)
 
